@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+/* ============================================================
+   IOMTAL SMP Launcher - tasarim sistemi
+
+   Aydinlik zemin, beyaz kartlar, yumusak yuvarlatma, hafif golgeler;
+   ayrim renkle degil bosluk ve ince cizgilerle yapiliyor. Vurgu
+   rengi IOMTAL'in kendi kirmizisi.
+   ============================================================ */
+
+@theme {
+  /* Zeminler. Sayfa kartlardan bir ton koyu; kart beyaz kalinca
+     yuzeyler ust uste degil yan yana duruyor. */
+  --color-page: #f8f9fc;
+  --color-card: #ffffff;
+  --color-hover: #f1f5f9;
+  --color-line: #e5e7eb;
+  --color-line-soft: #f1f5f9;
+
+  /* Marka. Dolu kirmizi yalnizca eylemlerde: dugme, aktif menu,
+     ilerleme. Hata rengi degil - o asagida ve farkli bir bicimde. */
+  --color-brand: #c40c0c;
+  --color-brand-hot: #e5201d;
+  --color-brand-dark: #8c0808;
+  --color-brand-tint: #fdecec;
+
+  /* Metin - gri merdiven. */
+  --color-ink: #1a202c;
+  --color-ink-soft: #6b7280;
+  --color-ink-mute: #8b95a5;
+  --color-ink-faint: #c7d0dd;
+
+  /* Durum renkleri. Marka kirmizi oldugu icin hata da kirmiziya
+     yakin; ayrimi renk degil bicim tasiyor: marka dolu bloklarda,
+     hata her zaman ikonlu ve zemini tonlu bir kartta cikiyor. */
+  --color-ok: #047857;
+  --color-ok-tint: #ecfdf5;
+  --color-warn: #b45309;
+  --color-warn-tint: #fffbeb;
+  --color-danger: #b91c1c;
+  --color-danger-tint: #fef2f2;
+  --color-danger-line: #fecaca;
+
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "Consolas", ui-monospace, monospace;
+
+  /* "Emphasized" egrisi - hizli baslayip yumusak duruyor. */
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    /* Launcher bir uygulama; metin secimi yalnizca gerekli yerlerde. */
+    user-select: none;
+    overflow: hidden;
+  }
+
+  /* Ince, renksiz kaydirma cubugu. */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  input {
+    user-select: text;
+  }
+
+  /* Klavye ile gezenler icin gorunur odak. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  /* Kaydirici: ray ince ve gri, tutamak yuvarlak ve marka renginde. */
+  .range::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 3px solid #ffffff;
+    border-radius: 9999px;
+    background: var(--color-brand);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .range:hover::-webkit-slider-thumb {
+    background: var(--color-brand-hot);
+  }
+  .range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #ffffff;
+    border-radius: 9999px;
+    background: var(--color-brand);
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .selectable {
+    user-select: text;
+  }
+
+  /* Bolum etiketi. */
+  .eyebrow {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Sayilar sutun halinde hizalansin. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ============================================================
+   Hareket
+
+   Iki imza var: dugmenin hoverda hapa
+   donusmesi ve kartin bir tik yukselmesi. Ustune arayuz acilirken
+   ogelerin sirayla yerine oturmasi ekleniyor.
+   ============================================================ */
+
+/* Ogeler asagidan yumusakca beliriyor. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Ray ogeleri soldan. */
+@keyframes enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Kumanda seridi asagidan yukseliyor. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Toplam bilinmiyorken dolu blok rayda gidip geliyor. */
+@keyframes shuttle {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+
+/* Baglanti gostergesi - yavas bir nefes. */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.enter {
+  animation: enter 0.32s var(--ease-emphasized) both;
+}
+
+.enter-left {
+  animation: enter-left 0.28s var(--ease-emphasized) both;
+}
+
+.rise {
+  animation: rise 0.36s var(--ease-emphasized) 0.12s both;
+}
+
+.shuttle {
+  animation: shuttle 1.1s cubic-bezier(0.55, 0, 0.45, 1) infinite;
+}
+
+.live {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+/*
+ * Clickbox - dugme efekti.
+ *
+ * Hoverda dugme yuvarlaklasip hap oluyor, basinca
+ * hafifce kuculuyor. Halka yerine bicimin kendisi degistigi icin
+ * arayuzde ek bir cizgi olusmuyor.
+ */
+.clickbox {
+  transition:
+    border-radius 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.clickbox:hover:not(:disabled) {
+  border-radius: 24px;
+}
+
+.clickbox:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Kart hoverda bir tik yukseliyor. */
+.lift {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .lift:hover {
+    transform: none;
+  }
+
+  .clickbox:active:not(:disabled) {
+    transform: none;
+  }
+}
